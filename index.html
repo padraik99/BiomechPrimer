@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BiomechPrimer</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="index.html">BiomechPrimer</a>
+  <nav><a href="index.html" aria-current="page">Home</a><a href="units/unit0.html">Unit 0</a></nav>
+</header>
+<main>
+  <h1>BiomechPrimer</h1>
+  <p class="muted">A self-paced biomechanics course: plan for 3 sessions a week, 20 to 30 minutes each.</p>
+
+  <div class="card">
+    <h2 style="margin-top:0">This week</h2>
+    <p data-week></p>
+    <p data-due></p>
+  </div>
+
+  <h2>Units</h2>
+  <div class="grid">
+    <a class="card" href="units/unit0.html" style="text-decoration:none;color:inherit">
+      <h3 style="margin-top:0">Unit 0 · Planes, axes, joint actions</h3>
+      <p class="muted">Blind pretest, primer, 3D plane explorer, glass-pane drill, spaced retries.</p>
+      <p data-unit0></p>
+    </a>
+    <div class="card muted">
+      <h3 style="margin-top:0">Unit 1 · Layered muscle model</h3>
+      <p>Anterior/posterior, superficial/deep. Blind drag-and-place with confidence ratings. Coming next.</p>
+    </div>
+    <div class="card muted">
+      <h3 style="margin-top:0">Unit 2 · Attachments and line of pull</h3>
+      <p>Origin, insertion, line of pull, primary action. Coming later.</p>
+    </div>
+  </div>
+
+  <h2>Progress file</h2>
+  <div class="card">
+    <p>Progress lives in this browser. To use both machines, <strong>export</strong> to your Google Drive folder when you finish, and <strong>import</strong> on the other machine before you start. Import <em>merges</em> (the newest copy of each item wins), so nothing is lost if you forget once.</p>
+    <div class="row">
+      <button type="button" class="primary" data-export>Export progress</button>
+      <label class="btn" for="import-file">Import progress</label>
+      <input type="file" id="import-file" accept=".json,application/json" hidden>
+    </div>
+    <p data-io-msg aria-live="polite"></p>
+  </div>
+
+  <details class="card">
+    <summary>Settings</summary>
+    <div class="row" style="margin-top:10px">
+      <label>Theme
+        <select data-theme-select>
+          <option value="">Match system</option><option value="light">Light</option><option value="dark">Dark</option>
+        </select>
+      </label>
+    </div>
+    <p class="muted">Unlock all retries now. This breaks the spacing that makes retries work; use it only for testing.</p>
+    <button type="button" data-unlock>Unlock retries now</button>
+    <p class="muted">Erase all progress in this browser (export first).</p>
+    <button type="button" data-reset>Erase progress</button>
+  </details>
+</main>
+<footer>Plain HTML/CSS/JS. Readings from <a href="https://openstax.org/details/books/anatomy-and-physiology-2e" target="_blank" rel="noopener">OpenStax Anatomy &amp; Physiology 2e</a>.</footer>
+<script src="js/store.js"></script>
+<script src="js/theme.js"></script>
+<script src="js/quiz.js"></script>
+<script src="js/figure.js"></script>
+<script src="js/unit0-data.js"></script>
+<script>
+(function () {
+  'use strict';
+  var S = BP.store, Q = BP.quiz, $ = function (s) { return document.querySelector(s); };
+
+  function refresh() {
+    var n = S.sessionsThisWeek();
+    $('[data-week]').innerHTML = '<strong>' + n + ' / 3</strong> sessions this week' + (n >= 3 ? ', target met.' : '.');
+    var items = BP.unit0.ITEMS, blindLeft = Q.pending(items, 'blind').length, due = Q.pending(items, 'retry').length, next = Q.nextDue(items);
+    $('[data-due]').innerHTML = due ? '<strong>' + due + ' retry item' + (due > 1 ? 's' : '') + ' due now.</strong> <a href="units/unit0.html#retry">Go to retries</a>' :
+      next ? 'Next retry opens ' + Q.fmtDate(next) + '.' : '';
+    $('[data-unit0]').innerHTML = blindLeft === items.length ? 'Not started: begin with the blind pretest.' :
+      blindLeft ? (items.length - blindLeft) + ' of ' + items.length + ' pretest questions answered.' :
+      'Pretest done. ' + (due ? due + ' due.' : 'Retries scheduled.');
+  }
+
+  $('[data-export]').onclick = function () {
+    S.exportFile().then(function () { $('[data-io-msg]').textContent = 'Exported.'; })
+      .catch(function (e) { $('[data-io-msg]').textContent = 'Export failed: ' + e.message; });
+  };
+  $('#import-file').onchange = function () {
+    var file = this.files[0]; if (!file) return;
+    S.importFile(file).then(function (r) {
+      $('[data-io-msg]').textContent = 'Imported: ' + r.added + ' new, ' + r.updated + ' updated items.';
+      refresh();
+    }).catch(function (e) { $('[data-io-msg]').textContent = 'Import failed: ' + e.message; });
+    this.value = '';
+  };
+  $('[data-unlock]').onclick = function () { S.unlockAll(); refresh(); };
+  $('[data-reset]').onclick = function () {
+    if (confirm('Erase all BiomechPrimer progress in this browser? This cannot be undone unless you exported.')) { S.reset(); refresh(); }
+  };
+  var ts = $('[data-theme-select]');
+  ts.value = BP.theme.get();
+  ts.onchange = function () { BP.theme.set(ts.value); };
+  refresh();
+})();
+</script>
+</body>
+</html>
