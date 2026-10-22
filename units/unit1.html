@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Unit 1 · Muscle Map</title>
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="../index.html">BiomechPrimer</a>
+  <nav><a href="../index.html">Home</a><a href="unit0.html">Unit 0</a><a href="unit1.html" aria-current="page">Unit 1</a></nav>
+</header>
+<main>
+  <h1>Unit 1: Muscle map, front and back</h1>
+  <p class="muted">The order for this unit: <strong>1</strong> place the muscles blind, <strong>2</strong> decode the names, <strong>3</strong> study the model, then <strong>4</strong> retry when it opens in 2 days. That's 4 scenes and 22 spots. Plan on about 2 sessions plus the retry.</p>
+
+  <div class="tabs" role="tablist">
+    <button type="button" role="tab" data-tab="place">1 · Blind placing</button>
+    <button type="button" role="tab" data-tab="names">2 · Name decoder</button>
+    <button type="button" role="tab" data-tab="study">3 · Study model</button>
+    <button type="button" role="tab" data-tab="retry">4 · Retry <span data-due-badge></span></button>
+  </div>
+
+  <!-- 1 BLIND PLACING -->
+  <section data-panel="place" role="tabpanel">
+    <div class="key">
+      <strong>Place before you study.</strong> Drag a name onto a numbered spot, or tap a name and then tap the spot. Rate your confidence each time. Nothing is revealed now, and every name stays available on every spot, so the list never gives answers away by elimination. You will probably get most of these wrong, which is the point.
+    </div>
+    <div data-place></div>
+  </section>
+
+  <!-- 2 NAME DECODER -->
+  <section data-panel="names" role="tabpanel" hidden>
+    <p>Muscle names are descriptions in Latin and Greek. Each one is named for its size, shape, location, number of heads, fiber direction or action (<a href="https://openstax.org/books/anatomy-and-physiology-2e/pages/11-2-naming-skeletal-muscles" target="_blank" rel="noopener">OpenStax 11.2</a>). Decode the name and you have half the location for free.</p>
+    <div class="table-wrap"><table>
+      <tr><th>Muscle</th><th>Name parts</th><th>Named for</th><th>So you expect...</th></tr>
+      <tr><td>Gluteus maximus / medius / minimus</td><td><em>gloutos</em> buttock; largest / middle / smallest</td><td>location, size</td><td>three stacked buttock muscles, largest on the outside</td></tr>
+      <tr><td>Iliopsoas</td><td><em>ilium</em> + <em>psoa</em> (loins)</td><td>attachments</td><td>a muscle from the hip bone and low spine</td></tr>
+      <tr><td>Tensor fasciae latae</td><td>tightener of the <em>fascia lata</em> (the broad band of the thigh)</td><td>action</td><td>something at the side of the hip, tensioning the IT band</td></tr>
+      <tr><td>Rectus femoris</td><td><em>rectus</em> straight; of the femur</td><td>fiber direction, location</td><td>straight down the thigh</td></tr>
+      <tr><td>Vastus lateralis / medialis / intermedius</td><td><em>vastus</em> huge; outer / inner / in between</td><td>size, position</td><td>big thigh muscles at the outer, inner and middle front</td></tr>
+      <tr><td>Biceps femoris</td><td>two heads; of the femur</td><td>number of heads</td><td>a hamstring with two origins</td></tr>
+      <tr><td>Semitendinosus</td><td>half tendon</td><td>shape</td><td>a muscle that turns into a long tendon halfway down</td></tr>
+      <tr><td>Semimembranosus</td><td>half membrane</td><td>shape</td><td>a flat, sheet-like upper part</td></tr>
+      <tr><td>Adductor magnus / longus</td><td>brings toward the midline; large / long</td><td>action, size</td><td>inner thigh</td></tr>
+      <tr><td>Piriformis</td><td><em>pirum</em> pear-shaped</td><td>shape</td><td>a small pear-shaped muscle deep in the buttock</td></tr>
+      <tr><td>Gastrocnemius</td><td><em>gaster</em> belly + <em>kneme</em> leg</td><td>shape, location</td><td>the belly of the calf</td></tr>
+      <tr><td>Soleus</td><td>like a sole (the flat fish)</td><td>shape</td><td>a flat muscle under the calf</td></tr>
+      <tr><td>Tibialis anterior</td><td>front, along the tibia</td><td>location</td><td>the front of the shin</td></tr>
+      <tr><td>Erector spinae</td><td>straightener of the spine</td><td>action</td><td>columns beside the spine</td></tr>
+      <tr><td>Multifidus</td><td>split into many</td><td>shape</td><td>many small slips close to the spine</td></tr>
+      <tr><td>Quadratus lumborum</td><td>square of the loins</td><td>shape, location</td><td>a square sheet in the low back</td></tr>
+    </table></div>
+    <div class="key"><strong>Muscles work as a system.</strong> Learn them in families: three gluteals stacked by depth, four quadriceps on the front of the thigh (rectus femoris plus three vasti), three hamstrings behind, and adductors inside. In Unit 2 you'll see why each family pulls the way it does.</div>
+    <p class="muted">Readings: <a href="https://openstax.org/books/anatomy-and-physiology-2e/pages/11-6-appendicular-muscles-of-the-pelvic-girdle-and-lower-limbs" target="_blank" rel="noopener">11.6 pelvic girdle and lower limbs</a>, <a href="https://openstax.org/books/anatomy-and-physiology-2e/pages/11-3-axial-muscles-of-the-head-neck-and-back" target="_blank" rel="noopener">11.3 back</a>, <a href="https://openstax.org/books/anatomy-and-physiology-2e/pages/11-4-axial-muscles-of-the-abdominal-wall-and-thorax" target="_blank" rel="noopener">11.4 quadratus lumborum</a>.</p>
+  </section>
+
+  <!-- 3 STUDY -->
+  <section data-panel="study" role="tabpanel" hidden>
+    <div class="model-layout">
+      <div class="model-stage" data-study-stage></div>
+      <div class="panel card">
+        <div class="row" role="group" aria-label="Scene" data-scene-buttons></div>
+        <label><input type="checkbox" data-labels> Show all names</label>
+        <div data-study-info class="readout" aria-live="polite"><p class="muted">Tap a muscle.</p></div>
+        <p class="muted" data-scene-note></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 RETRY -->
+  <section data-panel="retry" role="tabpanel" hidden>
+    <div data-retry></div>
+  </section>
+</main>
+<footer>Schematic drawings, simplified on purpose. Check them against the OpenStax figures, and report anything that looks wrong.</footer>
+<script src="../js/store.js"></script>
+<script src="../js/theme.js"></script>
+<script src="../js/quiz.js"></script>
+<script src="../js/muscles-data.js"></script>
+<script src="../js/model.js"></script>
+<script src="../js/unit1.js"></script>
+</body>
+</html>

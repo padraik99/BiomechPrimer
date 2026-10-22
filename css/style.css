@@ -12,6 +12,9 @@
   --sag: #d64545;
   --fro: #2f7de1;
   --tra: #2f9e5a;
+  --bone: #e9e2cf; --bone-edge: #9a8f74;
+  --g-glute: #b5523f; --g-hipflex: #c98a3a; --g-quad: #d17a4f; --g-ham: #8f4a6b; --g-add: #6c7a3a;
+  --g-calf: #2f7f86; --g-shin: #3d8f6a; --g-back: #4b67a8; --g-ctx: #bdbcb4;
   --radius: 10px;
   --tap: 44px;
   color-scheme: light;
@@ -21,6 +24,7 @@
     --bg: #15171b; --surface: #1e2127; --ink: #e8e6e1; --muted: #9aa0ad;
     --line: #343843; --accent: #6ea8ff; --good: #4ac26b; --bad: #ff6b6b; --warn: #e3b341;
     --sag: #ff6b6b; --fro: #6ea8ff; --tra: #56d37f;
+    --bone: #4a4536; --bone-edge: #8c836a; --g-glute: #d0705c; --g-hipflex: #dba15a; --g-quad: #e0916a; --g-ham: #b46b8e; --g-add: #97a55c; --g-calf: #4fb0b8; --g-shin: #5fbf92; --g-back: #7b97d6; --g-ctx: #6b6a63;
     color-scheme: dark;
   }
 }
@@ -28,6 +32,7 @@
   --bg: #15171b; --surface: #1e2127; --ink: #e8e6e1; --muted: #9aa0ad;
   --line: #343843; --accent: #6ea8ff; --good: #4ac26b; --bad: #ff6b6b; --warn: #e3b341;
   --sag: #ff6b6b; --fro: #6ea8ff; --tra: #56d37f;
+  --bone: #4a4536; --bone-edge: #8c836a; --g-glute: #d0705c; --g-hipflex: #dba15a; --g-quad: #e0916a; --g-ham: #b46b8e; --g-add: #97a55c; --g-calf: #4fb0b8; --g-shin: #5fbf92; --g-back: #7b97d6; --g-ctx: #6b6a63;
   color-scheme: dark;
 }
 
@@ -126,3 +131,34 @@ th, td { border-bottom: 1px solid var(--line); padding: 6px 8px; text-align: lef
 .mini-stage { max-width: 380px; margin: 0 auto 8px; aspect-ratio: 1 / 1; }
 
 footer { color: var(--muted); font-size: .85rem; padding: 24px 16px; text-align: center; }
+
+/* muscle model (Unit 1) */
+.model-layout, .place-layout { display: grid; gap: 12px; grid-template-columns: minmax(0, 1fr) 310px; align-items: start; }
+@media (max-width: 760px) { .model-layout, .place-layout { grid-template-columns: 1fr; } }
+.model-stage { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 6px; min-width: 0; }
+.model-stage svg { width: 100%; height: auto; max-height: 80vh; display: block; touch-action: none; user-select: none; -webkit-user-select: none; }
+.model-stage .bone { fill: var(--bone); stroke: var(--bone-edge); stroke-width: 1.2; }
+.model-stage .mus { stroke: var(--surface); stroke-width: 1; cursor: pointer; }
+.model-stage .mus.sel { stroke: var(--ink); stroke-width: 3; }
+.model-stage .ghost { fill: none; stroke: var(--muted); stroke-dasharray: 4 3; pointer-events: none; }
+.g-glute { fill: var(--g-glute); } .g-hipflex { fill: var(--g-hipflex); } .g-quad { fill: var(--g-quad); }
+.g-ham { fill: var(--g-ham); } .g-add { fill: var(--g-add); } .g-calf { fill: var(--g-calf); }
+.g-shin { fill: var(--g-shin); } .g-back { fill: var(--g-back); } .g-ctx { fill: var(--g-ctx); }
+.model-stage .side { font: 700 16px "Segoe UI", system-ui, sans-serif; fill: var(--muted); text-anchor: middle; }
+.model-stage .spot { cursor: pointer; }
+.model-stage .spot circle { fill: var(--surface); stroke: var(--ink); stroke-width: 2; }
+.model-stage .spot text { font: 700 12px "Segoe UI", system-ui, sans-serif; fill: var(--ink); text-anchor: middle; dominant-baseline: central; pointer-events: none; }
+.model-stage .spot.armed circle { stroke: var(--accent); stroke-width: 4; }
+.model-stage .spot.done circle { fill: var(--line); }
+.model-stage .spot.right circle { fill: var(--good); stroke: var(--good); }
+.model-stage .spot.wrong circle { fill: var(--bad); stroke: var(--bad); }
+.model-stage .spot.right text, .model-stage .spot.wrong text { fill: var(--surface); }
+.model-stage .mlabel { font: 600 10px "Segoe UI", system-ui, sans-serif; fill: var(--ink); paint-order: stroke; stroke: var(--surface); stroke-width: 3px; text-anchor: middle; pointer-events: none; }
+.place-side { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.namechips { display: flex; flex-wrap: wrap; gap: 6px; }
+.namechip {
+  min-height: 40px; padding: 6px 12px; border-radius: 999px; border: 1.5px solid var(--line); background: var(--surface); color: var(--ink);
+  font: inherit; font-size: .9rem; cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none;
+}
+.namechip.selected { border-color: var(--accent); outline: 2px solid var(--accent); }
+.namechip.ghost-drag { position: fixed; z-index: 50; pointer-events: none; box-shadow: 0 6px 18px rgb(0 0 0 / .25); cursor: grabbing; margin: 0; }

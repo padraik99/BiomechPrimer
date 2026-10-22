@@ -12,7 +12,7 @@ A self-paced biomechanics course built as a static web app: plain HTML, CSS and 
 | Unit | Content | Status |
 |---|---|---|
 | 0 | Planes, axes, joint actions: blind pretest, primer, 3D plane explorer, glass-pane drill, retries | built |
-| 1 | Layered anterior/posterior muscle model, blind drag-and-place | next |
+| 1 | Muscle map: schematic front/back views in superficial and deep layers, 22 blind drag-and-place spots, name decoder, study model, retries | built |
 | 2 | Attachments, line of pull, primary action | planned |
 | 3 | Flashcards (StudyLab export), quizzes, exams | planned |
 | 4 | Part 2 (position-dependent actions) and application layer | planned |
@@ -52,12 +52,15 @@ Progress is stored in `localStorage`. Use **Export** and **Import** on the Home 
 ## Checks
 
 ```
-node tests/figure.test.js
+node tests/figure.test.js     # Unit 0 joint actions (plain Node)
+node tests/spots.check.js     # Unit 1 drop spots (needs Playwright + Chromium)
 ```
 
-This test checks two things:
+`figure.test.js` checks two things:
 - Every animated joint action moves in the anatomically correct direction.
 - Each action stays inside its plane, which is the rule the glass-pane drill depends on.
+
+`spots.check.js` checks that every Unit 1 drop spot sits on its own muscle, with that muscle painted on top. Re-run it after any anatomy correction.
 
 ## Layout
 
@@ -71,5 +74,9 @@ js/quiz.js          blind / retry / practice quiz engine
 js/unit0-data.js    Unit 0 question bank
 js/unit0.js         Unit 0 page controller
 js/theme.js         light/dark override
+units/unit1.html    Unit 1
+js/muscles-data.js  muscle shapes, layers, drop spots: ALL Unit 1 anatomy lives here
+js/model.js         draws a scene (right side authored, left mirrored)
+js/unit1.js         Unit 1 page controller
 tests/              Node checks (no dependencies)
 ```

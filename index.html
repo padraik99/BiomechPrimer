@@ -9,7 +9,7 @@
 <body>
 <header class="top">
   <a class="brand" href="index.html">BiomechPrimer</a>
-  <nav><a href="index.html" aria-current="page">Home</a><a href="units/unit0.html">Unit 0</a></nav>
+  <nav><a href="index.html" aria-current="page">Home</a><a href="units/unit0.html">Unit 0</a><a href="units/unit1.html">Unit 1</a></nav>
 </header>
 <main>
   <h1>BiomechPrimer</h1>
@@ -28,10 +28,11 @@
       <p class="muted">Blind pretest, primer, 3D plane explorer, glass-pane drill, spaced retries.</p>
       <p data-unit0></p>
     </a>
-    <div class="card muted">
-      <h3 style="margin-top:0">Unit 1 · Layered muscle model</h3>
-      <p>Anterior/posterior, superficial/deep. Blind drag-and-place with confidence ratings. Coming next.</p>
-    </div>
+    <a class="card" href="units/unit1.html" style="text-decoration:none;color:inherit">
+      <h3 style="margin-top:0">Unit 1 · Muscle map, front and back</h3>
+      <p class="muted">21 muscles in superficial and deep layers. Blind drag-and-place, name decoder, study model, retries.</p>
+      <p data-unit1></p>
+    </a>
     <div class="card muted">
       <h3 style="margin-top:0">Unit 2 · Attachments and line of pull</h3>
       <p>Origin, insertion, line of pull, primary action. Coming later.</p>
@@ -70,20 +71,37 @@
 <script src="js/quiz.js"></script>
 <script src="js/figure.js"></script>
 <script src="js/unit0-data.js"></script>
+<script src="js/muscles-data.js"></script>
 <script>
 (function () {
   'use strict';
   var S = BP.store, Q = BP.quiz, $ = function (s) { return document.querySelector(s); };
 
+  // Unit 1 item ids, built the same way as js/unit1.js (one per spot per scene).
+  function u1Items() {
+    var out = [];
+    BP.muscles.SCENES.forEach(function (sc) { sc.spots.forEach(function (sp) { out.push({ id: 'u1-' + sc.id + '-' + sp[0] }); }); });
+    return out;
+  }
+
   function refresh() {
     var n = S.sessionsThisWeek();
     $('[data-week]').innerHTML = '<strong>' + n + ' / 3</strong> sessions this week' + (n >= 3 ? ', target met.' : '.');
-    var items = BP.unit0.ITEMS, blindLeft = Q.pending(items, 'blind').length, due = Q.pending(items, 'retry').length, next = Q.nextDue(items);
-    $('[data-due]').innerHTML = due ? '<strong>' + due + ' retry item' + (due > 1 ? 's' : '') + ' due now.</strong> <a href="units/unit0.html#retry">Go to retries</a>' :
+    var units = [
+      { key: 'unit0', items: BP.unit0.ITEMS, href: 'units/unit0.html#retry', start: 'begin with the blind pretest', noun: 'pretest questions answered' },
+      { key: 'unit1', items: u1Items(), href: 'units/unit1.html#retry', start: 'begin with blind placing', noun: 'spots placed' }
+    ];
+    var dueLinks = [], next = null;
+    units.forEach(function (u) {
+      var blindLeft = Q.pending(u.items, 'blind').length, due = Q.pending(u.items, 'retry').length, nd = Q.nextDue(u.items);
+      if (due) dueLinks.push('<a href="' + u.href + '">' + due + ' in ' + (u.key === 'unit0' ? 'Unit 0' : 'Unit 1') + '</a>');
+      if (nd && (!next || nd < next)) next = nd;
+      $('[data-' + u.key + ']').innerHTML = blindLeft === u.items.length ? 'Not started: ' + u.start + '.' :
+        blindLeft ? (u.items.length - blindLeft) + ' of ' + u.items.length + ' ' + u.noun + '.' :
+        'Blind round done. ' + (due ? due + ' due.' : 'Retries scheduled.');
+    });
+    $('[data-due]').innerHTML = dueLinks.length ? '<strong>Retries due now:</strong> ' + dueLinks.join(' · ') :
       next ? 'Next retry opens ' + Q.fmtDate(next) + '.' : '';
-    $('[data-unit0]').innerHTML = blindLeft === items.length ? 'Not started: begin with the blind pretest.' :
-      blindLeft ? (items.length - blindLeft) + ' of ' + items.length + ' pretest questions answered.' :
-      'Pretest done. ' + (due ? due + ' due.' : 'Retries scheduled.');
   }
 
   $('[data-export]').onclick = function () {
