@@ -17,6 +17,28 @@ A self-paced biomechanics course built as a static web app: plain HTML, CSS and 
 | 3 | Flashcards (StudyLab export), quizzes, exams | planned |
 | 4 | Part 2 (position-dependent actions) and application layer | planned |
 
+## Decisions
+
+- **Unit 1 art:** schematic SVG drawn for the course, where each muscle is its own shape with origin and insertion points so line of pull can be computed. Each muscle also links to the matching OpenStax figure for checking realism.
+- **Flashcards to StudyLab:** BiomechPrimer exports a JSON file that StudyLab's "Import cards" button reads (that button is being added in the StudyLab repo):
+
+```json
+{
+  "format": "studylab-cards",
+  "version": 1,
+  "source": "BiomechPrimer",
+  "subject": "Biomechanics",
+  "cards": [
+    { "sourceId": "u0-slice-fro", "front": "A frontal plane cut separates the body into [___] and [___] parts.",
+      "answer": "anterior|||posterior", "hint": "two panes of glass, chest and back", "difficulty": "basic" },
+    { "sourceId": "u0-fro-actions", "kind": "anyOf", "front": "Name one frontal-plane joint action.",
+      "accept": ["abduction", "adduction", "lateral flexion", "inversion", "eversion"], "difficulty": "basic" }
+  ]
+}
+```
+
+`[___]` marks a blank. Two blanks take two answers separated by `|||`. `difficulty` is `basic`, `application` or `synthesis`. `sourceId` is stable, so re-importing a corrected card updates it instead of creating a duplicate.
+
 ## Learning design
 
 - **Blind pretest:** you answer first, before studying. Answers stay hidden until the retry.
