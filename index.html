@@ -4,6 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>BiomechPrimer</title>
+<meta name="theme-color" content="#1f6feb">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -12,42 +16,45 @@
   <nav><a href="index.html" aria-current="page">Home</a><a href="units/unit0.html">Unit 0</a><a href="units/unit1.html">Unit 1</a></nav>
 </header>
 <main>
-  <h1>BiomechPrimer</h1>
-  <p class="muted">A self-paced biomechanics course: plan for 3 sessions a week, 20 to 30 minutes each.</p>
-
-  <div class="card">
-    <h2 style="margin-top:0">This week</h2>
-    <p data-week></p>
-    <p data-due></p>
-  </div>
-
-  <h2>Units</h2>
-  <div class="grid">
-    <a class="card" href="units/unit0.html" style="text-decoration:none;color:inherit">
-      <h3 style="margin-top:0">Unit 0 · Planes, axes, joint actions</h3>
-      <p class="muted">Blind pretest, primer, 3D plane explorer, glass-pane drill, spaced retries.</p>
-      <p data-unit0></p>
-    </a>
-    <a class="card" href="units/unit1.html" style="text-decoration:none;color:inherit">
-      <h3 style="margin-top:0">Unit 1 · Muscle map, front and back</h3>
-      <p class="muted">21 muscles in superficial and deep layers. Blind drag-and-place, name decoder, study model, retries.</p>
-      <p data-unit1></p>
-    </a>
-    <div class="card muted">
-      <h3 style="margin-top:0">Unit 2 · Attachments and line of pull</h3>
-      <p>Origin, insertion, line of pull, primary action. Coming later.</p>
-    </div>
-  </div>
-
-  <h2>Progress file</h2>
-  <div class="card">
-    <p>Progress lives in this browser. To use both machines, <strong>export</strong> to your Google Drive folder when you finish, and <strong>import</strong> on the other machine before you start. Import <em>merges</em> (the newest copy of each item wins), so nothing is lost if you forget once.</p>
+  <section class="next card" aria-labelledby="next-title">
+    <div class="eyebrow">Next up</div>
+    <h1 id="next-title" data-next-title>Loading...</h1>
+    <p data-next-why></p>
     <div class="row">
-      <button type="button" class="primary" data-export>Export progress</button>
-      <label class="btn" for="import-file">Import progress</label>
-      <input type="file" id="import-file" accept=".json,application/json" hidden>
+      <a class="btn primary" data-next-go href="#">Start</a>
+      <span class="muted" data-next-time></span>
     </div>
-    <p data-io-msg aria-live="polite"></p>
+    <p class="muted" data-next-then></p>
+  </section>
+
+  <div class="week card">
+    <div><strong>This week</strong> <span class="muted">(target: 3 sessions of 20 to 30 min)</span></div>
+    <div class="dots" data-dots aria-hidden="true"></div>
+    <span data-week class="muted"></span>
+  </div>
+
+  <h2>Course path</h2>
+  <p class="muted">Steps tick themselves where the app can tell they're done; tick reading and study steps yourself. Ticks sync with your progress file.</p>
+  <div class="path" data-path></div>
+
+  <h2>Use it on every device</h2>
+  <div class="grid">
+    <div class="card">
+      <h3 style="margin-top:0">Install it like an app</h3>
+      <p><strong>Edge (desktop and Surface):</strong> open the site, then menu (…) → Apps → <em>Install this site as an app</em>.</p>
+      <p><strong>Android (Chrome):</strong> menu (⋮) → <em>Add to Home screen</em> or <em>Install app</em>.</p>
+      <p><strong>iPhone (Safari):</strong> Share → <em>Add to Home Screen</em>.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Sync progress</h3>
+      <p>Each device keeps its own progress. <strong>Export</strong> to your Google Drive folder when you finish a session, and <strong>import</strong> on the next device before you start. Import merges: the newest copy of every answer and tick wins.</p>
+      <div class="row">
+        <button type="button" class="primary" data-export>Export progress</button>
+        <label class="btn" for="import-file">Import progress</label>
+        <input type="file" id="import-file" accept=".json,application/json" hidden>
+      </div>
+      <p data-io-msg aria-live="polite"></p>
+    </div>
   </div>
 
   <details class="card">
@@ -65,44 +72,127 @@
     <button type="button" data-reset>Erase progress</button>
   </details>
 </main>
-<footer>Plain HTML/CSS/JS. Readings from <a href="https://openstax.org/details/books/anatomy-and-physiology-2e" target="_blank" rel="noopener">OpenStax Anatomy &amp; Physiology 2e</a>.</footer>
+<footer>Plain HTML/CSS/JS. Readings from <a href="https://openstax.org/details/books/anatomy-and-physiology-2e" target="_blank" rel="noopener">OpenStax Anatomy &amp; Physiology 2e</a> (CC BY 4.0).</footer>
 <script src="js/store.js"></script>
 <script src="js/theme.js"></script>
 <script src="js/quiz.js"></script>
-<script src="js/figure.js"></script>
 <script src="js/unit0-data.js"></script>
 <script src="js/muscles-data.js"></script>
 <script>
 (function () {
   'use strict';
   var S = BP.store, Q = BP.quiz, $ = function (s) { return document.querySelector(s); };
+  var OS = 'https://openstax.org/books/anatomy-and-physiology-2e/pages/';
 
   // Unit 1 item ids, built the same way as js/unit1.js (one per spot per scene).
-  function u1Items() {
-    var out = [];
-    BP.muscles.SCENES.forEach(function (sc) { sc.spots.forEach(function (sp) { out.push({ id: 'u1-' + sc.id + '-' + sp[0] }); }); });
-    return out;
+  var U1 = [];
+  BP.muscles.SCENES.forEach(function (sc) { sc.spots.forEach(function (sp) { U1.push({ id: 'u1-' + sc.id + '-' + sp[0] }); }); });
+  var U0 = BP.unit0.ITEMS;
+
+  function blindDone(items) { return Q.pending(items, 'blind').length === 0; }
+  function retriedAll(items) {
+    return items.every(function (it) { var s = S.getItem(it.id); return s && s.attempts.some(function (a) { return a.phase === 'retry'; }); });
   }
 
-  function refresh() {
-    var n = S.sessionsThisWeek();
-    $('[data-week]').innerHTML = '<strong>' + n + ' / 3</strong> sessions this week' + (n >= 3 ? ', target met.' : '.');
-    var units = [
-      { key: 'unit0', items: BP.unit0.ITEMS, href: 'units/unit0.html#retry', start: 'begin with the blind pretest', noun: 'pretest questions answered' },
-      { key: 'unit1', items: u1Items(), href: 'units/unit1.html#retry', start: 'begin with blind placing', noun: 'spots placed' }
-    ];
-    var dueLinks = [], next = null;
-    units.forEach(function (u) {
-      var blindLeft = Q.pending(u.items, 'blind').length, due = Q.pending(u.items, 'retry').length, nd = Q.nextDue(u.items);
-      if (due) dueLinks.push('<a href="' + u.href + '">' + due + ' in ' + (u.key === 'unit0' ? 'Unit 0' : 'Unit 1') + '</a>');
-      if (nd && (!next || nd < next)) next = nd;
-      $('[data-' + u.key + ']').innerHTML = blindLeft === u.items.length ? 'Not started: ' + u.start + '.' :
-        blindLeft ? (u.items.length - blindLeft) + ' of ' + u.items.length + ' ' + u.noun + '.' :
-        'Blind round done. ' + (due ? due + ' due.' : 'Retries scheduled.');
+  /* Course path. kind 'auto' = the app detects completion; 'check' = you tick it.
+   * Retry steps are time-gated: they only become "next" once something is due. */
+  var UNITS = [
+    { title: 'Unit 0 · Planes, axes, joint actions', steps: [
+      { id: 'u0-pre', kind: 'auto', label: 'Blind pretest', mins: 12, href: 'units/unit0.html#pretest',
+        why: 'Guess first, before any reading: trying and failing before study makes the later reading stick better (the pretesting effect).',
+        done: function () { return blindDone(U0); } },
+      { id: 'chk-u0-primer', kind: 'check', label: 'Read the Unit 0 primer and do the wall test', mins: 10, href: 'units/unit0.html#primer',
+        why: 'The short course primer: planes are named for the slice, and the frontal plane is the side-to-side one.' },
+      { id: 'chk-os-1-6', kind: 'check', label: 'OpenStax 1.6 Anatomical Terminology', mins: 15, href: OS + '1-6-anatomical-terminology', ext: true,
+        why: 'Anatomical position, directional terms and body planes, from the textbook.' },
+      { id: 'chk-os-9-5', kind: 'check', label: 'OpenStax 9.5 Types of Body Movements', mins: 20, href: OS + '9-5-types-of-body-movements', ext: true,
+        why: 'The joint-action vocabulary with figures.' },
+      { id: 'chk-u0-explore', kind: 'check', label: 'Plane explorer and two rounds of the glass drill', mins: 10, href: 'units/unit0.html#explorer',
+        why: 'Watch movements break the glass, then predict them yourself.' },
+      { id: 'u0-retry', kind: 'retry', label: 'First retry', mins: 10, href: 'units/unit0.html#retry', items: U0,
+        why: 'Your blind answers come back with feedback.', done: function () { return retriedAll(U0); } }
+    ] },
+    { title: 'Unit 1 · Muscle map, front and back', steps: [
+      { id: 'u1-blind', kind: 'auto', label: 'Blind placing (22 spots)', mins: 12, href: 'units/unit1.html#place',
+        why: 'Place every muscle before studying any of them.', done: function () { return blindDone(U1); } },
+      { id: 'chk-u1-names', kind: 'check', label: 'Name decoder and OpenStax 11.2', mins: 15, href: 'units/unit1.html#names',
+        why: 'Decode the Latin and Greek, and half the location comes free.' },
+      { id: 'chk-u1-study', kind: 'check', label: 'Study model with the OpenStax 11.6 figures', mins: 20, href: 'units/unit1.html#study',
+        why: 'Tap every muscle in all four layers and compare each one with the textbook figure.' },
+      { id: 'u1-retry', kind: 'retry', label: 'First retry', mins: 10, href: 'units/unit1.html#retry', items: U1,
+        why: 'Your blind placements come back with feedback.', done: function () { return retriedAll(U1); } }
+    ] },
+    { title: 'Unit 2 · Attachments and line of pull', future: true, steps: [] }
+  ];
+
+  function isDone(st) { return st.kind === 'check' ? S.isChecked(st.id) : st.done(); }
+
+  function renderPath() {
+    var html = '';
+    UNITS.forEach(function (u) {
+      html += '<div class="card"><h3 style="margin-top:0">' + u.title + '</h3>';
+      if (u.future) { html += '<p class="muted" style="margin:0">Coming after Unit 1.</p></div>'; return; }
+      html += '<ol class="steps">';
+      u.steps.forEach(function (st) {
+        var done = isDone(st), due = st.items ? Q.pending(st.items, 'retry').length : 0, nd = st.items ? Q.nextDue(st.items) : null;
+        var status = st.kind === 'check'
+          ? '<input type="checkbox" data-check="' + st.id + '"' + (done ? ' checked' : '') + ' aria-label="Mark done: ' + Q.esc(st.label) + '">'
+          : '<span class="tick' + (done ? ' on' : '') + '" aria-hidden="true">' + (done ? '✓' : '') + '</span>';
+        var meta = st.mins + ' min';
+        if (st.kind === 'retry' && !done) meta = due ? '<strong>' + due + ' due now</strong>' : nd ? 'opens ' + Q.fmtDate(nd) : 'after the blind round';
+        html += '<li class="' + (done ? 'done' : '') + '">' + status +
+          '<a href="' + st.href + '"' + (st.ext ? ' target="_blank" rel="noopener"' : '') + '>' + Q.esc(st.label) + (st.ext ? ' ↗' : '') + '</a>' +
+          '<span class="muted meta">' + meta + '</span></li>';
+      });
+      html += '</ol></div>';
     });
-    $('[data-due]').innerHTML = dueLinks.length ? '<strong>Retries due now:</strong> ' + dueLinks.join(' · ') :
-      next ? 'Next retry opens ' + Q.fmtDate(next) + '.' : '';
+    $('[data-path]').innerHTML = html;
+    document.querySelectorAll('[data-check]').forEach(function (c) {
+      c.onchange = function () { S.setCheck(c.dataset.check, c.checked); refresh(); };
+    });
   }
+
+  /* Next up: due retries first (they are time-sensitive and short), then the first
+   * unfinished step in path order, skipping retries that haven't opened yet. */
+  function pickNext() {
+    var all = [];
+    UNITS.forEach(function (u) { u.steps.forEach(function (st) { all.push(st); }); });
+    var dueSteps = all.filter(function (st) { return st.items && Q.pending(st.items, 'retry').length; });
+    if (dueSteps.length) return { st: dueSteps[0], rest: all.filter(function (x) { return x !== dueSteps[0] && !isDone(x) && x.kind !== 'retry'; }) };
+    var open = all.filter(function (st) { return !isDone(st) && st.kind !== 'retry'; });
+    return { st: open[0] || null, rest: open.slice(1) };
+  }
+
+  function renderNext() {
+    var pick = pickNext(), st = pick.st;
+    var go = $('[data-next-go]');
+    if (!st) {
+      var nd = Q.nextDue(U0.concat(U1));
+      $('[data-next-title]').textContent = 'All caught up';
+      $('[data-next-why]').textContent = nd ? 'Your next retry opens ' + Q.fmtDate(nd) + '. Unit 2 is being built.' : 'Unit 2 is being built.';
+      go.hidden = true; $('[data-next-time]').textContent = ''; $('[data-next-then]').textContent = '';
+      return;
+    }
+    var due = st.items ? Q.pending(st.items, 'retry').length : 0;
+    $('[data-next-title]').textContent = (st.kind === 'retry' ? 'Retry due: ' + due + ' item' + (due > 1 ? 's' : '') : st.label);
+    $('[data-next-why]').textContent = st.why;
+    go.hidden = false; go.href = st.href;
+    go.textContent = st.ext ? 'Open reading ↗' : 'Start';
+    if (st.ext) { go.target = '_blank'; go.rel = 'noopener'; } else { go.removeAttribute('target'); }
+    $('[data-next-time]').textContent = 'About ' + st.mins + ' min';
+    var then = pick.rest[0];
+    $('[data-next-then]').innerHTML = then ? 'After that: ' + Q.esc(then.label) + ' (' + then.mins + ' min).' +
+      (st.ext ? ' Tick the reading off in the course path below when you finish.' : '') : '';
+  }
+
+  function renderWeek() {
+    var n = S.sessionsThisWeek(), dots = '';
+    for (var i = 0; i < 3; i++) dots += '<span class="dot' + (i < n ? ' on' : '') + '"></span>';
+    $('[data-dots]').innerHTML = dots;
+    $('[data-week]').textContent = n + ' of 3' + (n >= 3 ? ', target met' : '');
+  }
+
+  function refresh() { renderNext(); renderPath(); renderWeek(); }
 
   $('[data-export]').onclick = function () {
     S.exportFile().then(function () { $('[data-io-msg]').textContent = 'Exported.'; })
@@ -123,6 +213,8 @@
   var ts = $('[data-theme-select]');
   ts.value = BP.theme.get();
   ts.onchange = function () { BP.theme.set(ts.value); };
+  // Coming back to this tab after a session elsewhere: refresh the plan.
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) refresh(); });
   refresh();
 })();
 </script>

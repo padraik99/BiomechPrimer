@@ -65,7 +65,8 @@ node tests/spots.check.js     # Unit 1 drop spots (needs Playwright + Chromium)
 ## Layout
 
 ```
-index.html          home: weekly sessions, due retries, export/import
+index.html          landing page: Next up, course path with ticks, weekly sessions, install guide, export/import
+manifest.webmanifest, icons/   install-as-app support (Edge, Android, iPhone home screen)
 units/unit0.html    Unit 0
 css/style.css
 js/store.js         progress, spaced-retry scheduler, export/import merge

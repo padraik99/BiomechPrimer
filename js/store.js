@@ -15,7 +15,7 @@
   var LADDER = [1, 3, 7, 14];
 
   function blank() {
-    return { version: 1, items: {}, sessions: [], settings: {}, updatedAt: 0 };
+    return { version: 1, items: {}, sessions: [], settings: {}, checks: {}, updatedAt: 0 };
   }
 
   function load() {
@@ -26,6 +26,7 @@
       if (!data || typeof data !== 'object' || !data.items) return blank();
       data.sessions = data.sessions || [];
       data.settings = data.settings || {};
+      data.checks = data.checks || {};
       return data;
     } catch (e) {
       return blank();
@@ -109,6 +110,11 @@
       if (!a) { state.items[k] = b; added++; }
       else if ((b.updatedAt || 0) > (a.updatedAt || 0)) { state.items[k] = b; updated++; }
     });
+    // checks: { id: { on, t } }, newest change wins per id
+    Object.keys(incoming.checks || {}).forEach(function (k) {
+      var a = state.checks[k], b = incoming.checks[k];
+      if (!a || (b.t || 0) > (a.t || 0)) state.checks[k] = b;
+    });
     (incoming.sessions || []).forEach(function (d) { if (state.sessions.indexOf(d) === -1) state.sessions.push(d); });
     state.sessions.sort();
     if ((incoming.updatedAt || 0) > (state.updatedAt || 0) && incoming.settings) state.settings = incoming.settings;
@@ -147,6 +153,10 @@
 
   function reset() { state = blank(); save(); }
 
+  // Manual checkmarks for steps the app can't detect (e.g. "read OpenStax 1.6").
+  function isChecked(id) { return !!(state.checks[id] && state.checks[id].on); }
+  function setCheck(id, on) { state.checks[id] = { on: !!on, t: Date.now() }; if (on) noteSession(); save(); }
+
   // Count today as a study session without recording an item (drills, explorer).
   function touch() { noteSession(); save(); }
 
@@ -156,6 +166,6 @@
     get state() { return state; },
     getItem: getItem, record: record, isDue: isDue, unlockAll: unlockAll,
     sessionsThisWeek: sessionsThisWeek, merge: merge, exportText: exportText,
-    exportFile: exportFile, importFile: importFile, reset: reset, save: save, touch: touch
+    exportFile: exportFile, importFile: importFile, reset: reset, save: save, touch: touch, isChecked: isChecked, setCheck: setCheck
   };
 })();
