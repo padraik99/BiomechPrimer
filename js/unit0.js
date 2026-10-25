@@ -153,6 +153,7 @@
           (score >= 9 ? 'Solid. The frontal plane is the side-to-side plane.' : 'Run it again. Say the rule before each answer: "front | back slice, so side-to-side movement".') +
           '</p><button type="button" class="primary" data-again>Again</button></div>';
         $('[data-again]', box).onclick = function () { runDrill(box, drillDeck(10)); };
+        if (BP.backup) BP.backup.milestone();
         return;
       }
       var mv = deck[i], hits = mv.plane !== 'fro';

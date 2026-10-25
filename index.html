@@ -46,8 +46,9 @@
       <p><strong>iPhone (Safari):</strong> Share → <em>Add to Home Screen</em>.</p>
     </div>
     <div class="card">
-      <h3 style="margin-top:0">Sync progress</h3>
-      <p>Each device keeps its own progress. <strong>Export</strong> to your Google Drive folder when you finish a session, and <strong>import</strong> on the next device before you start. Import merges: the newest copy of every answer and tick wins.</p>
+      <h3 style="margin-top:0">Backup and sync</h3>
+      <div class="autobk" data-autobk aria-live="polite"></div>
+      <p class="muted">Manual: <strong>export</strong> saves a copy; <strong>import</strong> merges a copy into this device (the newest version of every answer and tick wins). After clearing your browser, import your backup file to get everything back.</p>
       <div class="row">
         <button type="button" class="primary" data-export>Export progress</button>
         <label class="btn" for="import-file">Import progress</label>
@@ -74,6 +75,7 @@
 </main>
 <footer>Plain HTML/CSS/JS. Readings from <a href="https://openstax.org/details/books/anatomy-and-physiology-2e" target="_blank" rel="noopener">OpenStax Anatomy &amp; Physiology 2e</a> (CC BY 4.0).</footer>
 <script src="js/store.js"></script>
+<script src="js/backup.js"></script>
 <script src="js/theme.js"></script>
 <script src="js/quiz.js"></script>
 <script src="js/unit0-data.js"></script>
@@ -208,8 +210,45 @@
   };
   $('[data-unlock]').onclick = function () { S.unlockAll(); refresh(); };
   $('[data-reset]').onclick = function () {
-    if (confirm('Erase all BiomechPrimer progress in this browser? This cannot be undone unless you exported.')) { S.reset(); refresh(); }
+    if (!confirm('Erase all BiomechPrimer progress in this browser? Auto-backup will be turned off first, so your backup file keeps its copy.')) return;
+    BP.backup.unlink().then(function () { S.reset(); refresh(); renderBackup(BP.backup.info()); });
   };
+
+  // ---------- auto-backup panel ----------
+  function ago(t) {
+    if (!t) return 'never';
+    var m = Math.round((Date.now() - t) / 60000);
+    return m < 1 ? 'just now' : m < 60 ? m + ' min ago' : new Date(t).toLocaleString(undefined, { weekday: 'short', hour: 'numeric', minute: '2-digit' });
+  }
+  function renderBackup(i) {
+    var box = $('[data-autobk]'), h;
+    if (i.status === 'linked') {
+      h = '<p><span class="pill ok">Auto-backup on</span> Saving every change to <strong>' + Q.esc(i.file || 'your file') + '</strong>. Last saved ' + ago(i.last) + '.</p>' +
+        '<div class="row"><button type="button" data-bk-off>Turn off</button></div>';
+    } else if (i.status === 'needs-permission') {
+      h = '<p><span class="pill warn">Paused</span> Edge needs your OK to keep writing <strong>' + Q.esc(i.file || 'the backup file') + '</strong>. If Edge offers "Allow on every visit", choose it.</p>' +
+        '<div class="row"><button type="button" class="primary" data-bk-reconnect>Reconnect</button><button type="button" data-bk-off>Turn off</button></div>';
+    } else if (i.status === 'error') {
+      h = '<p><span class="pill warn">Problem</span> ' + Q.esc(i.error) + '</p><div class="row"><button type="button" class="primary" data-bk-retry>Try again</button><button type="button" data-bk-off>Turn off</button></div>';
+    } else if (i.status === 'unlinked') {
+      h = '<p><strong>Turn on auto-backup:</strong> pick a file in your Google Drive folder once, and every change is saved there. Do the same on your other computer and pick the <em>same</em> file to keep both in sync.</p>' +
+        '<div class="row"><button type="button" class="primary" data-bk-new>Create backup file</button><button type="button" data-bk-existing>Use an existing backup file</button></div>';
+    } else {
+      h = '<p>This browser can\u2019t write to a file automatically (phones can\u2019t). A <strong>Back up now</strong> bar appears after each finished round. Last backup: ' + ago(i.last) + '.</p>';
+    }
+    box.innerHTML = h;
+    var on = function (sel, fn) { var b = box.querySelector(sel); if (b) b.onclick = fn; };
+    on('[data-bk-new]', BP.backup.linkNew);
+    on('[data-bk-existing]', BP.backup.linkExisting);
+    on('[data-bk-reconnect]', BP.backup.reconnect);
+    on('[data-bk-retry]', BP.backup.sync);
+    on('[data-bk-off]', BP.backup.unlink);
+  }
+  BP.backup.onChange(renderBackup);
+  BP.backup.ready.then(function () { renderBackup(BP.backup.info()); });
+  renderBackup(BP.backup.info());
+  // Progress merged in from the shared file (another computer): redraw the plan.
+  BP.onSynced = function () { refresh(); };
   var ts = $('[data-theme-select]');
   ts.value = BP.theme.get();
   ts.onchange = function () { BP.theme.set(ts.value); };

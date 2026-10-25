@@ -119,6 +119,7 @@
           (mode === 'retry' ? '<p>Correct items come back in 1, 3, 7, then 14 days. Misses come back tomorrow.</p>' : '') + '</div>';
       }
       container.innerHTML = html;
+      if (BP.backup) BP.backup.milestone();
       onDone && onDone(results);
     }
 

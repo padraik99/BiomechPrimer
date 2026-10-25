@@ -45,15 +45,21 @@ A self-paced biomechanics course built as a static web app: plain HTML, CSS and 
 - **Confidence rating on every answer.** High-confidence errors get a callout on retry (the hypercorrection effect).
 - **Spacing:** the first retry opens 2 days after the blind attempt. After that, correct answers return in 1, 3, 7 and 14 days, and misses return in 1 day.
 
-## Progress sync
+## Progress, backup and sync
 
-Progress is stored in `localStorage`. Use **Export** and **Import** on the Home page to sync through a file in your Google Drive folder. Import merges: the newest copy of each item wins.
+Progress is stored in this browser (`localStorage`). Nothing is sent to a server, so anyone else using the link gets their own fresh copy.
+
+- **Auto-backup (Edge/Chrome on a computer):** on the Home page, choose **Create backup file** and save it in your Google Drive folder. After that, every change is written to the file within about 2 seconds. Before each write the app reads the file and merges it, so two computers linked to the *same* file stay in sync and never overwrite each other. On a later visit Edge may ask for permission again: click **Reconnect**, or pick "Allow on every visit" if Edge offers it.
+- **Phones:** browsers there can't write to a chosen file. After each finished round, a **Back up now** bar appears and downloads the file.
+- **After clearing your browser:** Home → **Import progress** → pick the backup file, and everything comes back.
+- **Merge rule:** the newest copy of every answer and every tick wins.
 
 ## Checks
 
 ```
 node tests/figure.test.js     # Unit 0 joint actions (plain Node)
 node tests/spots.check.js     # Unit 1 drop spots (needs Playwright + Chromium)
+node tests/backup.check.js    # auto-backup, merge between devices, phone fallback (Playwright)
 ```
 
 `figure.test.js` checks two things:
@@ -70,6 +76,7 @@ manifest.webmanifest, icons/   install-as-app support (Edge, Android, iPhone hom
 units/unit0.html    Unit 0
 css/style.css
 js/store.js         progress, spaced-retry scheduler, export/import merge
+js/backup.js        auto-backup to a linked file; Back up now bar where browsers can't
 js/figure.js        3D stick figure, planes, axes, joint actions (Pointer Events)
 js/quiz.js          blind / retry / practice quiz engine
 js/unit0-data.js    Unit 0 question bank

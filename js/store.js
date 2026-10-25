@@ -35,9 +35,11 @@
 
   var state = load();
 
+  // Every save announces itself so js/backup.js can write the backup file.
   function save() {
     state.updatedAt = Date.now();
     try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { /* storage blocked */ }
+    try { window.dispatchEvent(new Event('bp:changed')); } catch (e) { /* no window (tests) */ }
   }
 
   function dayStamp(t) {
@@ -104,7 +106,7 @@
   // Merge: per item keep the newer copy; union sessions; settings newest wins.
   function merge(incoming) {
     if (!incoming || typeof incoming !== 'object' || !incoming.items) throw new Error('Not a BiomechPrimer progress file.');
-    var added = 0, updated = 0;
+    var added = 0, updated = 0, checks = 0, other = false;
     Object.keys(incoming.items).forEach(function (k) {
       var a = state.items[k], b = incoming.items[k];
       if (!a) { state.items[k] = b; added++; }
@@ -113,14 +115,18 @@
     // checks: { id: { on, t } }, newest change wins per id
     Object.keys(incoming.checks || {}).forEach(function (k) {
       var a = state.checks[k], b = incoming.checks[k];
-      if (!a || (b.t || 0) > (a.t || 0)) state.checks[k] = b;
+      if (!a || (b.t || 0) > (a.t || 0)) { state.checks[k] = b; checks++; }
     });
-    (incoming.sessions || []).forEach(function (d) { if (state.sessions.indexOf(d) === -1) state.sessions.push(d); });
+    (incoming.sessions || []).forEach(function (d) { if (state.sessions.indexOf(d) === -1) { state.sessions.push(d); other = true; } });
     state.sessions.sort();
-    if ((incoming.updatedAt || 0) > (state.updatedAt || 0) && incoming.settings) state.settings = incoming.settings;
-    save();
-    return { added: added, updated: updated };
+    if ((incoming.updatedAt || 0) > (state.updatedAt || 0) && incoming.settings &&
+        JSON.stringify(incoming.settings) !== JSON.stringify(state.settings)) { state.settings = incoming.settings; other = true; }
+    var changed = !!(added || updated || checks || other);
+    // Save only when something changed, so a backup round trip can't loop.
+    if (changed) save();
+    return { added: added, updated: updated, checks: checks, changed: changed };
   }
+
 
   function exportText() {
     return JSON.stringify(Object.assign({ app: 'BiomechPrimer', exportedAt: new Date().toISOString() }, state), null, 2);

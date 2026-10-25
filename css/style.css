@@ -181,3 +181,15 @@ footer { color: var(--muted); font-size: .85rem; padding: 24px 16px; text-align:
 .steps .tick { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--line); display: inline-flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 700; }
 .steps .tick.on { background: var(--good); border-color: var(--good); color: var(--surface); }
 .steps .meta { font-size: .85rem; text-align: right; }
+
+/* backup */
+.pill.ok { border-color: var(--good); color: var(--good); }
+.pill.warn { border-color: var(--warn); color: var(--warn); }
+.backup-bar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
+  display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: center;
+  padding: 10px max(16px, env(safe-area-inset-right, 0px)) calc(10px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
+  background: var(--surface); border-top: 2px solid var(--accent); box-shadow: 0 -4px 16px rgb(0 0 0 / .12);
+}
+.backup-bar span { flex: 1 1 260px; max-width: 60ch; }
+body:has(.backup-bar) main { padding-bottom: 140px; }

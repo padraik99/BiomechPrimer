@@ -215,6 +215,7 @@
       }
       box.innerHTML = html;
       updateBadge();
+      if (BP.backup) BP.backup.milestone();
     }
 
     scene();
